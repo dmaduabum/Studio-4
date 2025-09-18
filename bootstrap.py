@@ -31,7 +31,24 @@ def bootstrap_sample(X, y, compute_stat, n_bootstrap=1000):
 
     ....
     """
-    pass
+    #make X and Y numpy objects
+    X = np.asarray(X) 
+    y = np.asarray(y)
+    n = len(y)
+    
+    bootstrap_stats = np.zeros(n_bootstrap)
+    
+    for i in range(n_bootstrap):
+        # Sample with replacement
+        indices = np.random.choice(n, size=n, replace=True)
+        X_boot = X[indices]
+        y_boot = y[indices]
+        
+        # Compute statistic on bootstrap sample
+        bootstrap_stats[i] = compute_stat(X_boot, y_boot)
+    
+    return bootstrap_stats
+
 
 def bootstrap_ci(bootstrap_stats, alpha=0.05):
     """
