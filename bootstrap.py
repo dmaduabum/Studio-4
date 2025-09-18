@@ -1,3 +1,4 @@
+import numpy as np
 
 """
 Strong linear model in regression
@@ -69,7 +70,36 @@ def R_squared(X, y):
     
     Raises
     ------
+    TypeError
+        If not isinstance(X, np.ndarray)
+        If not isinstance(y, np.ndarray)
+
     ValueError
+        If X.ndim != 2
+        If y.ndim != 1
         If X.shape[0] != len(y)
+        If all entries of y are equal
+
+    LinAlgError
+        If X.T @ X
     """
-    pass
+    if not isinstance(X, np.ndarray):
+        raise TypeError("X must be a numpy array.")
+    if not isinstance(y, np.ndarray):
+        raise TypeError("y must be a numpy array.")
+
+    if X.ndim != 2:
+        raise ValueError("X must be 2D.")
+    if y.ndim != 1:
+        raise ValueError("y must be 1D.")
+    if X.shape[0] != len(y):
+        raise ValueError("X.shape[0] must equal len(y)")
+
+    y_mean = np.mean(y)
+    if np.allclose(y, y_mean): # Should probably set atol or rtol here
+        raise ValueError("All entries of y are equal.")
+
+    beta_hat = np.linalg.inv(X.T @ X) @ X.T @ y
+    y_hat = X @ beta_hat
+    
+    return 1 - (y - y_hat) ** 2 / (y - y_mean) ** 2
