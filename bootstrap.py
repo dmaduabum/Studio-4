@@ -66,9 +66,27 @@ def bootstrap_ci(bootstrap_stats, alpha=0.05):
     tuple 
         (lower_bound, upper_bound) of the CI
     
-    ....
+    Raises
+    ------
+    TypeError
+        If not isinstance(bootstrap_stats, np.ndarray)
+        If not isinstance(alpha, float)
+
+    ValueError
+        If bootstrap_stats.ndim != 1
+        If alpha not in (0, 1)
     """
-    pass
+    if not isinstance(bootstrap_stats, np.ndarray):
+        raise TypeError("bootstrap_stats must be a numpy array.")
+    if not isinstance(alpha, float):
+        raise TypeError("alpha must be a float.")
+    
+    if bootstrap_stats.ndim != 1:
+        raise ValueError("bootstrap_stats must be 1D.")
+    if alpha <= 0 or alpha >= 1:
+        raise ValueError("alpha must be in (0, 1)")
+
+    return np.quantile(bootstrap_stats, [alpha / 2, 1 - alpha / 2])
 
 def R_squared(X, y):
     """
