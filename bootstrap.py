@@ -95,20 +95,25 @@ def bootstrap_ci(bootstrap_stats, alpha=0.05):
     Raises
     ------
     TypeError
-        If not isinstance(bootstrap_stats, np.ndarray)
+        If bootstrap_stats is not array-like
         If not isinstance(alpha, float)
 
     ValueError
         If bootstrap_stats.ndim != 1
+        If bootstrap_stats is empty
         If alpha not in (0, 1)
     """
-    if not isinstance(bootstrap_stats, np.ndarray):
-        raise TypeError("bootstrap_stats must be a numpy array.")
+    try:
+        bootstrap_stats = np.asarray(bootstrap_stats, dtype=float)
+    except:
+        raise TypeError("bootstrap_stats must be array-like.")
     if not isinstance(alpha, float):
         raise TypeError("alpha must be a float.")
     
     if bootstrap_stats.ndim != 1:
         raise ValueError("bootstrap_stats must be 1D.")
+    if bootstrap_stats.size == 0:
+        raise ValueError("bootstrap_stats must be non-empty.")
     if alpha <= 0 or alpha >= 1:
         raise ValueError("alpha must be in (0, 1)")
 
@@ -132,22 +137,27 @@ def r_squared(X, y):
     Raises
     ------
     TypeError
-        If not isinstance(X, np.ndarray)
-        If not isinstance(y, np.ndarray)
+        If X is not array-like
+        If y is not array-like
 
     ValueError
         If X.ndim != 2
         If y.ndim != 1
         If X.shape[0] != len(y)
+        If X is empty and y is empty
         If all entries of y are equal
 
     LinAlgError
         If X.T @ X is singular
     """
-    if not isinstance(X, np.ndarray):
-        raise TypeError("X must be a numpy array.")
-    if not isinstance(y, np.ndarray):
-        raise TypeError("y must be a numpy array.")
+    try:
+        X = np.asarray(X, dtype=float)
+    except:
+        raise TypeError("X must be array-like.")
+    try:
+        y = np.asarray(y, dtype=float)
+    except:
+        raise TypeError("y must be array-like.")
 
     if X.ndim != 2:
         raise ValueError("X must be 2D.")
@@ -155,9 +165,11 @@ def r_squared(X, y):
         raise ValueError("y must be 1D.")
     if X.shape[0] != len(y):
         raise ValueError("X.shape[0] must equal len(y)")
+    if X.size == 0 and len(y) == 0:
+        raise ValueError("X and y must be non-empty.")
 
     y_mean = np.mean(y)
-    if np.allclose(y, y_mean): # Should probably set atol or rtol here
+    if np.allclose(y, y_mean):
         raise ValueError("All entries of y are equal.")
 
     beta_hat = np.linalg.inv(X.T @ X) @ X.T @ y
