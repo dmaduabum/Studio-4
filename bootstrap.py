@@ -114,7 +114,7 @@ def bootstrap_ci(bootstrap_stats, alpha=0.05):
 
     return np.quantile(bootstrap_stats, [alpha / 2, 1 - alpha / 2])
 
-def R_squared(X, y):
+def r_squared(X, y):
     """
     Calculate R-squared from multiple linear regression.
 
