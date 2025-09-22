@@ -142,7 +142,7 @@ def r_squared(X, y):
         If all entries of y are equal
 
     LinAlgError
-        If X.T @ X
+        If X.T @ X is singular
     """
     if not isinstance(X, np.ndarray):
         raise TypeError("X must be a numpy array.")
@@ -163,4 +163,7 @@ def r_squared(X, y):
     beta_hat = np.linalg.inv(X.T @ X) @ X.T @ y
     y_hat = X @ beta_hat
     
-    return 1 - (y - y_hat) ** 2 / (y - y_mean) ** 2
+    rss = np.sum((y - y_hat) ** 2)
+    tss = np.sum((y - y_mean) ** 2)
+
+    return 1 - rss / tss
