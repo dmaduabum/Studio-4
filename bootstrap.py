@@ -17,8 +17,9 @@ def bootstrap_sample(X, y, compute_stat, n_bootstrap=1000):
     Parameters
     ----------
     X : array-like, shape (n, p+1)
-        Design matrix
+        Design matrix (must contain numeric data)
     y : array-like, shape (n,)
+        Response vector (must contain numeric data)
     compute_stat : callable
         Function that computes a statistic (float) from data (X, y)
     n_bootstrap : int, default 1000
@@ -29,12 +30,37 @@ def bootstrap_sample(X, y, compute_stat, n_bootstrap=1000):
     numpy.ndarray
         Array of bootstrap statistics, length n_bootstrap
 
-    ....
+    Raises
+    ------
+    TypeError
+        If X or y are not array-like
+        If X or y contain non-numeric data
+    ValueError
+        If X and y have incompatible shapes
+        If n_bootstrap is not positive
+        If X or y are empty
     """
-    #make X and Y numpy objects
+    # Convert to numpy arrays
     X = np.asarray(X) 
     y = np.asarray(y)
     n = len(y)
+    
+    # Input validation
+    if n == 0:
+        raise ValueError("y cannot be empty")
+    if X.size == 0:
+        raise ValueError("X cannot be empty")
+    
+    # Check for numeric data types
+    if not np.issubdtype(X.dtype, np.number):
+        raise TypeError("X must contain numeric data")
+    if not np.issubdtype(y.dtype, np.number):
+        raise TypeError("y must contain numeric data")
+    
+    if X.shape[0] != n:
+        raise ValueError("X and y must have the same number of observations")
+    if n_bootstrap <= 0:
+        raise ValueError("n_bootstrap must be positive")
     
     bootstrap_stats = np.zeros(n_bootstrap)
     
